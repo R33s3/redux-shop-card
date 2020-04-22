@@ -1,13 +1,18 @@
 import React from 'react';
 import CartItem from './CartItem';
-const CartContainer = ({ cart = [] }) => {
+import { connect } from 'react-redux';
+import { CLEAR_CART, GET_TOTALS } from '../action';
+const CartContainer = ({ cart = [], total, dispatch }) => {
+  React.useEffect(() => {
+    dispatch({ type: GET_TOTALS });
+  }, [cart, dispatch]);
   if (cart.length === 0) {
     return (
       <section className='cart'>
         {/* cart header */}
         <header>
-          <h2>your bag</h2>
-          <h4 className='empty-cart'>is currently empty</h4>
+          <h2>Seu Carrinho</h2>
+          <h4 className='empty-cart'>está vazio no momento!</h4>
         </header>
       </section>
     );
@@ -16,7 +21,7 @@ const CartContainer = ({ cart = [] }) => {
     <section className='cart'>
       {/* cart header */}
       <header>
-        <h2>your bag</h2>
+        <h2>Seu Carrinho</h2>
       </header>
       {/* cart items */}
       <article>
@@ -29,13 +34,19 @@ const CartContainer = ({ cart = [] }) => {
         <hr />
         <div className='cart-total'>
           <h4>
-            total <span>$0.00</span>
+            total <span>r$ {total}</span>
           </h4>
         </div>
-        <button className='btn clear-btn'>clear cart</button>
+        <button className='btn clear-btn' onClick={() => dispatch({ type: CLEAR_CART })}>
+          clear cart
+        </button>
       </footer>
     </section>
   );
 };
 
-export default CartContainer;
+function mapStateToProps(store) {
+  const { cart, total } = store;
+  return { cart, total };
+}
+export default connect(mapStateToProps)(CartContainer);
